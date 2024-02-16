@@ -87,6 +87,10 @@ metadata {
 		capability "Temperature Measurement"
 		capability "Motion Sensor"
 
+		attribute 'airAQScore',	    						'NUMBER'
+		attribute 'airCO2',	    			    			'NUMBER'
+		attribute 'airVOC',	    		    				'NUMBER'
+		attribute 'airQAccuracy',	    					'NUMBER'
 		attribute 'apiConnected',							'STRING'
 		attribute 'autoAway', 								'STRING'
 		attribute 'autoHeatCoolFeatureEnabled', 			'STRING'

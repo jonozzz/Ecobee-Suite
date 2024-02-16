@@ -2528,6 +2528,13 @@ boolean pollEcobeeAPICallback( resp, pollState ) {
                                    ]
     						ext = true
                         }
+                        if (stat.runtime.actualAQAccuracy) {
+                        	temp <<[actualAQScore:	    stat.runtime.actualAQScore,
+									actualCO2:	        stat.runtime.actualCO2,
+									actualVOC:	        stat.runtime.actualVOC,
+                                    actualAQAccuracy:   stat.runtime.actualAQAccuracy,
+                                   ]
+                        }
 						if (!tempRuntime) tempRuntime = atomicState.runtime
 						if (!tempRuntime || !tempRuntime[tid] || (tempRuntime[tid] != temp)) {
 							rtReallyUpdated = true
@@ -4248,7 +4255,7 @@ void updateThermostatData() {
             	if (!changeOften?.containsKey(tid) || !changeOften[tid]) {
                     //				    temperature, occupancy, humidity, humiditySetpointDisplay, humiditySetpoint, dehumiditySetpoint
                 	//changeOften[tid] =[9999,		 'x',		-1,		  'x',					  -1,				 -1]
-                    changeOften[tid] = ["x"]*6 as List
+                    changeOften[tid] = ["x"]*10 as List
                 }
 				if (sensorsUpdated && occupancy &&	( changeOften[tid][1]  != occupancy)) 						data << [motion: occupancy]
                 if ((tempTemperature != null) && 	((changeOften[tid][0]  != tempTemperature) || userPChanged ||forcePoll))	
@@ -4260,7 +4267,13 @@ void updateThermostatData() {
                 if ((humiditySetpoint != null) &&	( changeOften[tid][4] != humiditySetpoint)) 				data << [humiditySetpoint: humiditySetpoint]
                 if ((dehumiditySetpoint != null) && ( changeOften[tid][5] != dehumiditySetpoint)) 				data << [dehumiditySetpoint: dehumiditySetpoint]
 
-                changeOften[tid] = [tempTemperature,occupancy,actualHumidity,humiditySetpointDisplay,humiditySetpoint,dehumiditySetpoint]
+                if ((runtime?.actualAQScore != null) && ( changeOften[tid][6] != runtime.actualAQScore))		data << [airAQScore: runtime.actualAQScore]
+                if ((runtime?.actualCO2 != null) && ( changeOften[tid][7] != runtime.actualCO2))		        data << [airCO2: runtime.actualCO2]
+                if ((runtime?.actualVOC != null) && ( changeOften[tid][8] != runtime.actualVOC))		        data << [airVOC: runtime.actualVOC]
+                if ((runtime?.actualAQAccuracy != null) && ( changeOften[tid][9] != runtime.actualAQAccuracy))	data << [airQAccuracy: runtime.actualAQAccuracy]
+
+                changeOften[tid] = [tempTemperature,occupancy,actualHumidity,humiditySetpointDisplay,humiditySetpoint,dehumiditySetpoint,
+                                    runtime.actualAQScore, runtime.actualCO2, runtime.actualVOC, runtime.actualAQAccuracy ]
                 oftenChanged = true
                 //if (TIMERS) log.debug "TIMER: Finished queueing Runtime data for ${tstatName} @ ${now() - atomicState.pollEcobeeAPIStart}ms"
             }
